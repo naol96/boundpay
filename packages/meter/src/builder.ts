@@ -1,4 +1,10 @@
-import type { BoundPayPaymentMetadata, PaymentInfo, PaymentMode, PaymentAdapter } from "./types.js";
+import type {
+  BoundPayPaymentMetadata,
+  BoundPaySSEMetadataPayload,
+  PaymentInfo,
+  PaymentMode,
+  PaymentAdapter,
+} from "./types.js";
 import { NumberedChunkMeter, assertIntegerMinor } from "./meter.js";
 
 export interface BuildMetadataOptions {
@@ -26,7 +32,7 @@ export function buildBoundPayMetadata(options: BuildMetadataOptions): BoundPayPa
   if (options.costMinor !== undefined) {
     costMinor = assertIntegerMinor(options.costMinor, "costMinor").toString();
   } else {
-    const perUnit = assertIntegerMinor(options.costPerUnitMinor ?? "1000", "costPerUnitMinor");
+    const perUnit = assertIntegerMinor(options.costPerUnitMinor ?? "1", "costPerUnitMinor");
     costMinor = (BigInt(units) * perUnit).toString();
   }
 
@@ -74,3 +80,38 @@ export function buildMetadataFromMeter(
     units: meter.getUnits(),
   });
 }
+
+/**
+ * Wraps canonical metadata into the Frozen Demo Contract SSE payload:
+ * { "boundpay": { units, costMinor, costMode, payment } }
+ */
+export function buildBoundPaySSEPayload(
+  metadata: BoundPayPaymentMetadata | BuildMetadataOptions
+): BoundPaySSEMetadataPayload {
+  const meta =
+    "units" in metadata && "costMinor" in metadata && "costMode" in metadata && "payment" in metadata
+      ? (metadata as BoundPayPaymentMetadata)
+      : buildBoundPayMetadata(metadata as BuildMetadataOptions);
+  return {
+    boundpay: meta,
+  };
+}
+
+/**
+ * Formats the final SSE metadata event chunk adhering to OpenAI-compatible streaming.
+ * Example: `data: {"boundpay":{...}}\n\n`
+ */
+export function formatBoundPaySSEEvent(
+  metadata: BoundPayPaymentMetadata | BuildMetadataOptions
+): string {
+  return `data: ${JSON.stringify(buildBoundPaySSEPayload(metadata))}\n\n`;
+}
+
+/**
+ * Returns the canonical OpenAI SSE stream termination chunk.
+ * Example: `data: [DONE]\n\n`
+ */
+export function formatDoneSSEEvent(): string {
+  return "data: [DONE]\n\n";
+}
+

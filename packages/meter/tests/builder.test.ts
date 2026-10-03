@@ -1,6 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { NumberedChunkMeter } from "../src/meter.js";
-import { buildBoundPayMetadata, buildMetadataFromMeter } from "../src/builder.js";
+import {
+  buildBoundPayMetadata,
+  buildMetadataFromMeter,
+  buildBoundPaySSEPayload,
+  formatBoundPaySSEEvent,
+  formatDoneSSEEvent,
+} from "../src/builder.js";
 import { StubPaymentAdapter } from "../src/adapter.js";
 
 describe("PaymentMetadataBuilder (MVP-BE-02)", () => {
@@ -74,5 +80,37 @@ describe("PaymentMetadataBuilder (MVP-BE-02)", () => {
         costPerUnitMinor: "10.5",
       })
     ).toThrowError(/Float money is forbidden/);
+  });
+
+  it("frozen demo contract: matches exact { boundpay: { units: 3, costMinor: '3', ... } }", () => {
+    const meter = new NumberedChunkMeter();
+    meter.recordChunk("token_1");
+    meter.recordChunk("token_2");
+    meter.recordChunk("token_3");
+
+    // With default options (1 chunk = 1 minor unit in demo fixture)
+    const payload = buildBoundPaySSEPayload(buildMetadataFromMeter(meter));
+
+    expect(payload).toEqual({
+      boundpay: {
+        units: 3,
+        costMinor: "3",
+        costMode: "DEMO_FIXTURE",
+        payment: {
+          mode: "stub",
+          status: "simulated",
+          txSignature: null,
+        },
+      },
+    });
+
+    // Formatted SSE event string
+    const sseEvent = formatBoundPaySSEEvent(buildMetadataFromMeter(meter));
+    expect(sseEvent).toBe(
+      `data: ${JSON.stringify(payload)}\n\n`
+    );
+
+    // Stream termination event
+    expect(formatDoneSSEEvent()).toBe("data: [DONE]\n\n");
   });
 });

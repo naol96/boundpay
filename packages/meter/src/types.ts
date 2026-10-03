@@ -19,6 +19,10 @@ export interface BoundPayPaymentMetadata {
   payment: PaymentInfo;
 }
 
+export interface BoundPaySSEMetadataPayload {
+  boundpay: BoundPayPaymentMetadata;
+}
+
 export interface ChunkRecord {
   index: number;
   timestamp: number;

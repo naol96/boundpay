@@ -80,7 +80,7 @@ export class NumberedChunkMeter {
    * Calculates total cost in minor units (e.g. lamports) without floating point math.
    * Returns cost as an integer string.
    */
-  public calculateCostMinor(costPerUnitMinor: string | bigint | number = "1000"): string {
+  public calculateCostMinor(costPerUnitMinor: string | bigint | number = "1"): string {
     const perUnit = assertIntegerMinor(costPerUnitMinor, "costPerUnitMinor");
     const unitsBigInt = BigInt(this.getUnits());
     const totalMinor = unitsBigInt * perUnit;

@@ -64,8 +64,8 @@ jobs:
           node-version: '22'
       - run: npm install -g pnpm@9.15.0
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint || echo "SKIP: henüz lint config yok"
-      - run: pnpm typecheck || echo "SKIP: henüz tsconfig yok"
+      - run: 'pnpm lint || echo "SKIP: henüz lint config yok"'
+      - run: 'pnpm typecheck || echo "SKIP: henüz tsconfig yok"'
 
   secret-scan:
     name: "Secret Scan (G14)"

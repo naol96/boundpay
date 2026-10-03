@@ -1,0 +1,16 @@
+id: "BP-00"
+title: "Kanonik Dokümantasyon Derlemesi (CANON.md)"
+lane: "A"
+risk_level: "R0"
+tests_first: false
+status: "COMPLETED"
+description: "Master mimari ve kaynak dokümanlardan tek gerçeklik kaynağı olan docs/CANON.md derlemesi."
+allowed_paths:
+  - "docs/CANON.md"
+  - "tasks/BP-00.yaml"
+forbidden_paths:
+  - "packages/types/**"
+  - "programs/**"
+  - "Anchor.toml"
+deliverables:
+  - "docs/CANON.md onaylanmış L0/L1 anayasası"

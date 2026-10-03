@@ -1,0 +1,14 @@
+{
+  "lane": "A",
+  "name": "Payment Core",
+  "skills": [
+    ".agents/skills/common-guards.md",
+    ".agents/skills/lane-a-payment.md"
+  ],
+  "allowed_packages": ["voucher", "chain", "watcher", "middleware"],
+  "forbidden_packages": ["store", "provider", "meter", "client", "apps", "bench"],
+  "context_layers": ["AGENTS.md", "docs/CANON.md"],
+  "risk_level": "R2",
+  "independent_review_required": true,
+  "human_approval_required": true
+}

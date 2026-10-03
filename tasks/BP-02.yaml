@@ -1,0 +1,22 @@
+id: "BP-02"
+title: "50-Bayt Voucher Codec, Doğrulama ve Golden Vectors"
+lane: "A"
+risk_level: "R2"
+tests_first: true
+status: "READY"
+description: >
+  Solana Foundation Payment Channels protokolü ile birebir uyumlu 50-baytlık imzasız voucher
+  payload ayrıştırıcısı, kodlayıcısı, Ed25519 imza doğrulayıcısı ve resmi test vektörleri.
+allowed_paths:
+  - "packages/voucher/**"
+  - "tasks/BP-02.yaml"
+forbidden_paths:
+  - "packages/types/**"
+  - "packages/store/**"
+  - "packages/provider/**"
+  - "programs/**"
+  - "Anchor.toml"
+deliverables:
+  - "packages/voucher/src/codec.ts: 50-byte binary encoder/decoder"
+  - "packages/voucher/src/verify.ts: Ed25519 voucher imza doğrulama"
+  - "packages/voucher/tests/golden.test.ts: Foundation generated client uyumlu golden vector testleri"

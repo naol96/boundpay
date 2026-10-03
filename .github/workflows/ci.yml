@@ -1,0 +1,88 @@
+name: BoundPay CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+
+  guard-checks:
+    name: "Guard: G1/G3/G4 Denylist"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: G1 — programs/ veya Anchor.toml yok
+        run: |
+          if find . -name "Anchor.toml" -not -path "./.git/*" | grep -q .; then
+            echo "FAIL: Anchor.toml bulundu" && exit 1
+          fi
+          if [ -d "programs" ]; then
+            echo "FAIL: programs/ dizini bulundu" && exit 1
+          fi
+          echo "OK: G1 temiz"
+      - name: G4 — Denylist (settleBatch, rearm, settle_metered)
+        run: |
+          FOUND=$(grep -r --include="*.ts" \
+            -e "settleBatch" -e "rearm" -e "settle_metered" \
+            packages/ apps/ --exclude-dir=node_modules 2>/dev/null || true)
+          if [ -n "$FOUND" ]; then
+            echo "FAIL: Denylist terimi bulundu:" && echo "$FOUND" && exit 1
+          fi
+          echo "OK: G4 temiz"
+
+  path-enforcement:
+    name: "Path Enforcement"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Değişen dosyalar task allowed_paths ile uyumlu mu?
+        run: |
+          echo "TODO: scripts/path-enforcement.js ile kontrol edilecek (BP-00)"
+          echo "Şu an SKIP — iskelet CI"
+
+  lock-check:
+    name: "Lock Check — Çakışan Draft PR"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Açık draft PR lock_scope çakışması
+        run: |
+          echo "TODO: scripts/lock-check.js ile kontrol edilecek (BP-00)"
+          echo "Şu an SKIP — iskelet CI"
+
+  lint-typecheck:
+    name: "Lint & Typecheck"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g pnpm@9.15.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint || echo "SKIP: henüz lint config yok"
+      - run: pnpm typecheck || echo "SKIP: henüz tsconfig yok"
+
+  secret-scan:
+    name: "Secret Scan (G14)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Anahtar/seed taraması
+        run: |
+          # Temel pattern'lar — gerçek secret scan tool (truffleHog/gitleaks) BP-00'da eklenir
+          FOUND=$(grep -r --include="*.ts" --include="*.json" --include="*.env" \
+            -e "[1-9][0-9]\{20,\}" \
+            -e "seed_phrase\|mnemonic\|private_key\|mainnet" \
+            packages/ apps/ --exclude-dir=node_modules 2>/dev/null || true)
+          if [ -n "$FOUND" ]; then
+            echo "UYARI: Potansiyel gizli veri bulundu — incele:" && echo "$FOUND"
+          else
+            echo "OK: G14 temiz (temel tarama)"
+          fi

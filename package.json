@@ -1,0 +1,23 @@
+{
+  "name": "boundpay",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:invariants": "pnpm --filter @boundpay/store test:invariants",
+    "test:fault-injection": "pnpm --filter @boundpay/store test:fault-injection",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "lock-check": "node scripts/lock-check.js",
+    "context-pack": "node scripts/context-pack.js",
+    "secret-scan": "node scripts/secret-scan.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0",
+    "vitest": "^2.0.0",
+    "eslint": "^9.0.0"
+  }
+}

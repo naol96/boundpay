@@ -1,0 +1,16 @@
+{
+  "lane": "C",
+  "name": "Gateway & Demo",
+  "skills": [
+    ".agents/skills/common-guards.md",
+    ".agents/skills/lane-c-gateway.md"
+  ],
+  "allowed_packages": ["provider", "meter", "client", "receipt"],
+  "allowed_apps": ["demo"],
+  "allowed_dirs": ["bench"],
+  "forbidden_packages": ["voucher", "chain", "watcher", "store", "middleware"],
+  "context_layers": ["AGENTS.md", "docs/CANON.md"],
+  "risk_level": "R1",
+  "independent_review_required": false,
+  "human_approval_required": false
+}

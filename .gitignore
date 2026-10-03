@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+.env
+.env.local
+*.local
+
+# Solana — yalnızca devnet (değersiz) cüzdanlar
+test-ledger/
+*.json.bak
+
+# ASLA commit'leme: mainnet/authority anahtarları
+# (secret-scan bu kalıpları tarar)
+**/id.json
+**/authority.json
+**/mainnet*.json
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
